@@ -1,39 +1,47 @@
 enum VideoCodec {
-    VP9,
-    VP8,
-    AVC,
+    vp9,
+    vp8,
+    avc,
 }
 
 enum AudioCodec {
-    OPUS,
-    G711pcmAlaw,
-    G711pcmMlaw,
+    opus,
+    g711pcmAlaw,
+    g711pcmMlaw,
 }
 
 enum Video {
-    Screen,
-    Camera
+    screen,
+    camera
 }
 
 final class SignalingRequirements {
-    bool video;
-    bool audio;
+    final bool video;
+    final bool audio;
 
-    int minWidth = 320;
-    int? maxWidth;
-    int minHeight = 120;
-    int? maxHeight;
+    // TODO: check minimum width imposed by webrtc
+    /// min width of <X> imposed by WebRTC specification
+    final int minWidth;
+    final int? maxWidth;
+    // TODO: check minimum height imposed by webrtc
+    /// min height of <X> imposed by WebRTC specification
+    final int minHeight;
+    final int? maxHeight;
 
     // preference of the codecs goes in order
-    VideoCodec[] supportedVideoCodecs = [VideoCodec.AVC, VideoCodec.VP9. VideoCodec.VP8];
-    AudioCodec[] supportedAudioCodecs = [AudioCodec.OPUS, AudioCodec.G711pcmAlaw, AudioCodec.G711pcmMlaw];
+    final List<VideoCodec> supportedVideoCodecs;
+    final List<AudioCodec> supportedAudioCodecs;
 
-    final SignalingRequirements({
-        this.minWidth,
+    const SignalingRequirements({
+        required this.audio,
+        required this.video,
+        this.minWidth = 320,
         this.maxWidth,
-        this.minHeight,
+        this.minHeight = 120,
         this.maxHeight,
-        this.supportedVideoCodecs,
-        this.supportedAudioCodecs,
+        // FIXME: fix error "The property 'VideoCodec' can't be accessed on the type 'VideoCodec' in a constant expression"
+        // "The property 'VideoCodec' can't be accessed on the type 'VideoCodec' in a constant expression"
+        this.supportedVideoCodecs = const [VideoCodec.avc, VideoCodec.vp9. VideoCodec.vp8],
+        this.supportedAudioCodecs = const [AudioCodec.opus, AudioCodec.g711pcmAlaw, AudioCodec.g711pcmMlaw],
     });
 }
