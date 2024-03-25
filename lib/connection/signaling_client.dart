@@ -1,33 +1,21 @@
 import 'dart:async';
 
-import 'package:united_screen_sharing/connection/signaling_requirements.dart';
+import 'package:united_screen_sharing/connection/signaling_common.dart';
 
-enum MessageType {
-    informationRequest,
-    passwordRequest,
-    passwordReject,
-    acceptHandshake,
-    rejectHandshake
-}
+final class SignalingClient {
+    final String address;
+    final int port;
 
-class SignalingConnection {
-    String address;
-    int port;
-
-    SignalingConnection(this.address, {
+    const SignalingClient(this.address, {
         this.port = 19083,
-        this.onMessageReceived,
-        this.onConnectionEstablished,
-        this.onConnectionFinished,
-        this.onRequirementsReceived
+        required this.onConnectionStateChange,
+        required this.onPasswordPrompt
     });
 
     FutureOr<void> initiateConnection() async {}
     FutureOr<void> finishConnection() async {}
 
-    FutureOr<void> Function(MessageType type, Object? info)? onMessageReceived;
-    FutureOr<void> Function()? onConnectionEstablished;
-    FutureOr<void> Function()? onConnectionFinished;
-    FutureOr<void> Function(SignalingRequirements requirements)? onRequirementsReceived;
+    final FutureOr<void> Function(String password) onPasswordPrompt;
+    final FutureOr<void> Function(ServerState) onConnectionStateChange;
 }
 
