@@ -3,11 +3,16 @@ import 'dart:async';
 
 import 'package:meta/meta.dart';
 
+import 'package:united_screen_sharing/connection/signaling_common.dart';
+
 class WebSocketServer {
     String address;
     int port;
 
-    WebSocketServer(this.address, this.port, {this.onWebSocket, this.onConnectionListening, this.onConnectionFinished});
+    WebSocketServer(this.address, this.port, {
+        required this.onWebSocket,
+        required this.onServerStateChange
+    });
 
     HttpServer? _server;
     Stream<WebSocket>? _sockets;
@@ -21,17 +26,17 @@ class WebSocketServer {
     /// is called when the http server is about to be closed
     @mustCallSuper
     void dispose() {
+        onServerStateChange(ServerState.closing);
+
         _server?.close();
 
-       if (onConnectionFinished != null) onConnectionFinished!();
+        onServerStateChange(ServerState.closed);
     }
 
     /// is called when a websocket connection is made with a pair. can be called many different times
     ///
     /// in order to use, listen for websocket messages using socket.listen() or async*, or send messages using .add and .addStream
-    FutureOr<void> Function(WebSocket socket)? onWebSocket;
+    FutureOr<void> Function(WebSocket socket) onWebSocket;
     /// is called when the http server is established and listening for connections
-    FutureOr<void> Function()? onConnectionListening;
-    /// is called when the http server is about to exit
-    FutureOr<void> Function()? onConnectionFinished;
+    FutureOr<void> Function(ServerState) onServerStateChange;
 }
